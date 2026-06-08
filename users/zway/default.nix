@@ -1,0 +1,92 @@
+{
+  pkgs,
+  username,
+  ...
+}: let
+  homeDirectory = "/home/${username}";
+in {
+  imports = [
+    ../.shared/flatpak.nix
+    ../.shared/fcitx5.nix
+    ../.shared/niri.nix
+    ../.shared/stylix.nix
+  ];
+
+  home = {
+    inherit username;
+    inherit homeDirectory;
+    stateVersion = "25.11";
+
+    packages = with pkgs; [
+      entr
+      conda
+      virt-manager
+      qemu
+      vlc
+      qtscrcpy
+      mission-center
+      ripgrep
+      lm_sensors
+      ffmpeg-full
+      # from unstable
+      unstable.opencode
+      unstable.hmcl
+      unstable.vscode
+      unstable.codex
+    ];
+  };
+
+  services.flatpak.packages = [
+    "com.qq.QQ"
+    "com.tencent.WeChat"
+    "com.getpostman.Postman"
+    "com.github.tchx84.Flatseal"
+    "com.moonlight_stream.Moonlight"
+    "com.valvesoftware.Steam"
+    "com.google.Chrome"
+    "com.jetbrains.IntelliJ-IDEA-Community"
+    "com.usebottles.bottles"
+    "cn.feishu.Feishu"
+    "org.localsend.localsend_app"
+    "org.telegram.desktop"
+    "org.mozilla.firefox"
+    "org.qbittorrent.qBittorrent"
+    "org.kde.okular"
+    "net.codelogistics.clicker"
+    "io.beekeeperstudio.Studio"
+    "io.github.giantpinkrobots.flatsweep"
+    "com.github.gmg137.netease-cloud-music-gtk"
+  ];
+
+  # bash shell
+  programs.fastfetch.enable = true;
+  programs.bash.enable = true;
+  programs.bash.initExtra ="fastfetch -l linux";
+  programs.bash.shellAliases = {
+    nv = "nvidia-offload";
+    nf = "nix flake new -t github:nix-community/nix-direnv";
+    ug = "sudo nixos-rebuild switch --flake ~/.nix-config#thinkbook";
+    up = "sudo nix flake update --flake ~/.nix-config && flatpak --user update -y";
+    ut = "sudo nixos-rebuild test --flake ~/.nix-config#thinkbook";
+    reboot-to-win = "systemctl reboot --boot-loader-entry=auto-windows";
+    clean = "sudo nix-collect-garbage -d";
+  };
+
+  # starship
+  programs.starship.enable = true;
+  programs.starship.enableBashIntegration = true;
+
+  # git config
+  programs.git.enable = true;
+  programs.git.settings.user.name = "zway";
+  programs.git.settings.user.email = "zfungew1@gmail.com";
+
+  # jj-vcs
+  programs.jujutsu.enable = true;
+  programs.jujutsu.settings.user.name = "zway";
+  programs.jujutsu.settings.user.email = "zfungew1@gmail.com";
+
+  # direnv
+  programs.direnv.enable = true;
+  programs.direnv.enableBashIntegration = true;
+}
