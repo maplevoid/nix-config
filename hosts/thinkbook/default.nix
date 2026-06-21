@@ -15,8 +15,8 @@
 
     # services
     ../../services/flatpak.nix
-    ../../services/gdm.nix
     ../../services/niri.nix
+    ../../services/ly.nix
     ../../services/sunshine.nix
   ];
 
