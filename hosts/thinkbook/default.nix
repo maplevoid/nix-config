@@ -57,8 +57,6 @@
     inputs.agenix.packages.${stdenv.hostPlatform.system}.default
   ];
 
-  # adb
-  programs.adb.enable = true;
   # obs
   programs.obs-studio.enable = true;
   programs.obs-studio.enableVirtualCamera = true;
@@ -72,7 +70,6 @@
       "wheel"
       "docker"
       "libvirtd"
-      "adbusers"
     ];
   };
 
@@ -107,6 +104,7 @@
 
   # virtualization
   virtualisation.docker.enable = true;
+  virtualisation.docker.package = pkgs.docker_29;
   virtualisation.libvirtd.enable = true;
 
   # graphics
@@ -127,5 +125,5 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.11"; # Did you read the comment?
+  system.stateVersion = "26.05"; # Did you read the comment?
 }
