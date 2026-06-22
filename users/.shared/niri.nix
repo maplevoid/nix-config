@@ -13,7 +13,7 @@
     wl-clipboard # clipboard
     copyq # clipboard manager gui tool
     waybar # status bar
-    swww # wallpaper
+    awww # wallpaper
     waypaper # wallpaper setter
     pavucontrol # pulseaudio volume control panel
     brightnessctl # brightness control for laptops
