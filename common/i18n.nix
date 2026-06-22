@@ -23,6 +23,7 @@
 
     fonts.packages = with pkgs; [
       adwaita-fonts
+      sarasa-gothic
       nerd-fonts.fira-code
       nerd-fonts.zed-mono
       nerd-fonts.adwaita-mono
