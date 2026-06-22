@@ -27,8 +27,10 @@
     programs.clash-verge.package = pkgs.clash-verge-rev;
     programs.clash-verge.enable = true;
     programs.clash-verge.autoStart = true;
-    programs.clash-verge.tunMode = true;
-    programs.clash-verge.serviceMode = true;
+    programs.clash-verge.tunMode = false;
+    programs.clash-verge.serviceMode = false;
+    networking.proxy.allProxy = "http://127.0.0.1:7897";
+
 
     # tailscale
     services.tailscale.enable = true;
