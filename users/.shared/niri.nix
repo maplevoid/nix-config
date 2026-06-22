@@ -19,7 +19,7 @@
     brightnessctl # brightness control for laptops
     swaylock-effects # sway lock
     swayidle # sway idle
-    xorg.xrdb # X resources database utility
+    xrdb # X resources database utility
   ];
 
   # scaling and rendering issues under Xwayland [https://github.com/Supreeeme/xwayland-satellite/issues/301]
