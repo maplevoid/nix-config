@@ -26,6 +26,9 @@
 
     # latest opencode from official repo
     # opencode.url = "github:sst/opencode";
+
+    nix-ld.url = "github:Mic92/nix-ld";
+    nix-ld.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs @ {
@@ -46,6 +49,9 @@
 
       modules = [
         ./hosts/thinkbook
+
+        # nix-ld module for managing nix-ld
+        inputs.nix-ld.nixosModules.nix-ld
 
         # agenix module for managing secrets
         inputs.agenix.nixosModules.default
