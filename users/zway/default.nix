@@ -33,6 +33,8 @@ in {
       unstable.hmcl
       unstable.vscode
       unstable.codex
+      unstable.pi-coding-agent
+
     ];
   };
 
