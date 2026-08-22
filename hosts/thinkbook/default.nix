@@ -55,6 +55,7 @@
     file
     tree
     alejandra
+    alsa-utils
     inputs.agenix.packages.${stdenv.hostPlatform.system}.default
   ];
 

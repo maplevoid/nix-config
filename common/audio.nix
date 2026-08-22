@@ -4,7 +4,12 @@
     services.pulseaudio.enable = false;
 
     security.rtkit.enable = true;
-    services.pipewire.wireplumber.enable = true; # this is actually enabled by default
+    services.pipewire.wireplumber = {
+      enable = true;
+      extraConfig."51-auto-switch-default-sink"."wireplumber.settings" = {
+        "node.restore-default-targets" = false;
+      };
+    };
     services.pipewire = {
       enable = true;
       alsa.enable = true;
