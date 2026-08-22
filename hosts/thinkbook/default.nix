@@ -37,6 +37,7 @@
   # overlays
   nixpkgs.overlays = [
     inputs.chinese-fonts.overlays.default
+    inputs.oh-my-pi.overlays.default
     (import ../../overlays/hmcl.nix)
     (import ../../overlays/pkgs-unstable.nix {inherit inputs;})
   ];

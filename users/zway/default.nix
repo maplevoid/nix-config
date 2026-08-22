@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   username,
   ...
@@ -16,6 +17,7 @@ in {
     inherit username;
     inherit homeDirectory;
     stateVersion = "25.11";
+    sessionVariables.QTSCRCPY_CONFIG_PATH = "${homeDirectory}/.config/qtscrcpy";
 
     packages = with pkgs; [
       entr
@@ -28,15 +30,18 @@ in {
       ripgrep
       lm_sensors
       ffmpeg-full
+      omp
+
       # from unstable
       unstable.opencode
       unstable.hmcl
       unstable.vscode
-      unstable.codex
-      unstable.pi-coding-agent
-
     ];
   };
+
+  home.activation.ensureQtScrcpyConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    $DRY_RUN_CMD ${pkgs.coreutils}/bin/mkdir -p "$HOME/.config/qtscrcpy"
+  '';
 
   services.flatpak.packages = [
     "com.qq.QQ"
@@ -63,7 +68,8 @@ in {
   # bash shell
   programs.fastfetch.enable = true;
   programs.bash.enable = true;
-  programs.bash.initExtra ="fastfetch -l linux";
+  programs.bash.initExtra = "fastfetch -l linux";
+  home.sessionPath = ["$HOME/.local/bin"];
   programs.bash.shellAliases = {
     nv = "nvidia-offload";
     nf = "nix flake new -t github:nix-community/nix-direnv";

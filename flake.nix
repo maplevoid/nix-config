@@ -29,6 +29,12 @@
 
     nix-ld.url = "github:Mic92/nix-ld";
     nix-ld.inputs.nixpkgs.follows = "nixpkgs";
+
+    # oh-my-pi (omp) coding agent, pinned rev includes official flake support
+    oh-my-pi = {
+      url = "github:can1357/oh-my-pi/326d24bd40d9858e24e1036ae739c27c72eeb543";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
   outputs = inputs @ {

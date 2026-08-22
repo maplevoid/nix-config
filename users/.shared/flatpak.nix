@@ -39,6 +39,9 @@ in {
       # give QQ access to the GPU (/dev/dri), otherwise its compositor
       # drops every frame and the window stays black
       devices = ["all"];
+      # QQ's AVSDK writes diagnostic configs to its working directory. Keep it
+      # inside the Flatpak sandbox instead of granting access to the whole home.
+      filesystems = ["!home" "xdg-download"];
     };
 
     "com.qq.QQ".Environment = {
