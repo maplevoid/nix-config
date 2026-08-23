@@ -40,28 +40,30 @@ overshoot {
 /* IMPORTANT:
    GTK3 + rounded corners + niri: make the surface slightly non-opaque */
 window {
-    /* use base00 but with alpha < 1 */
+    /* niri composites transparent GTK surfaces over the wallpaper */
     background-color: transparent;
-    border-radius: 12px;
+    border: 1px solid rgba(238, 255, 255, 0.12);
+    border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.30);
 }
 
 /* keep inner container consistent with window alpha */
 #outer-box {
-    padding: 4px;
-    background-color: rgba(33, 33, 33, 0.99);
-    border: rgba(48, 48, 48, 0.99) 1px solid;
-    border-radius: 12px;
+    padding: 6px;
+    background-color: rgba(33, 33, 33, 0.84);
+    border: 1px solid rgba(238, 255, 255, 0.10);
+    border-radius: 14px;
 }
 
 #input {
-    background-color: @base01;
+    background-color: rgba(48, 48, 48, 0.72);
     color: @base05;
 
-    border: 1px solid @base02;
-    border-radius: 12px;
+    border: 1px solid rgba(238, 255, 255, 0.12);
+    border-radius: 10px;
 
-    padding: 12px;
-    margin: 0px 0px 12px 0px;
+    padding: 10px;
+    margin: 0 0 10px 0;
 }
 
 #prompt {

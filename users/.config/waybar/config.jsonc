@@ -1,7 +1,7 @@
 // -*- mode: jsonc -*-
 // needed apps: misson-center, cpupower-gui, pavucontrol
 {
-    // "height": 32, auto height
+    "height": 28,
     "spacing": 0,
     "modules-left": [
         "cpu",
@@ -124,7 +124,7 @@
         }
     },
     "tray": {
-        "spacing": 8
+        "spacing": 4
     },
     "clock": {
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",

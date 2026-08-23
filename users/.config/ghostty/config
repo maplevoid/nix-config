@@ -1,4 +1,8 @@
 background = #212121
+background-opacity = 0.68
+background-blur = 20
+background-opacity-cells = true
+unfocused-split-opacity = 1
 foreground = #EEFFFF
 
 cursor-color = #EEFFFF

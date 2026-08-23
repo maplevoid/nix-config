@@ -349,6 +349,12 @@ window-rule {
     default-window-height { fixed 450; }
 }
 
+// Keep Ghostty's transparent surface visible through the focus ring.
+window-rule {
+    match app-id="com.mitchellh.ghostty"
+    draw-border-with-background false
+}
+
 // Enable rounded corners for all windows.
 window-rule {
     geometry-corner-radius 12

@@ -1,5 +1,5 @@
 /* color scheme https://github.com/tinted-theming/schemes/blob/spec-0.11/base16/material-darker.yaml */
-/* font-size 13px */
+/* font-size 12px */
 @define-color base00 #212121;
 @define-color base01 #303030;
 @define-color base02 #353535;
@@ -21,7 +21,7 @@
     border: none;
     border-radius: 0;
     font-family: "Adwaita Sans", "Noto Sans", sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     transition: color 0.3s ease;
     font-feature-settings: "tnum";
@@ -50,8 +50,8 @@ window#waybar {
 #custom-power {
     background: transparent;
     color: @base05;
-    padding: 0px 6px;
-    margin-right: 6px;
+    padding: 0 5px;
+    margin-right: 4px;
 }
 
 /* min-width start --------------------------------------------------------- */
@@ -59,26 +59,28 @@ window#waybar {
 #temperature,
 #battery,
 #backlight {
-    min-width: 2.5rem;
+    min-width: 2rem;
 }
 
 #power-profiles-daemon,
 #custom-power {
-    min-width: 1rem;
+    min-width: 0.9rem;
 }
 
 #pulseaudio {
-    min-width: 7rem;
+    min-width: 6rem;
 }
 
 /* min-width end ----------------------------------------------------------- */
 
 /* left start -------------------------------------------------------------- */
 .modules-left {
-    background: @base01;
-    padding: 0 8px;
-    border-radius: 12px;
-    margin: 3px 0 2px 3px;
+    background: rgba(48, 48, 48, 0.78);
+    padding: 0 6px;
+    border: 1px solid rgba(238, 255, 255, 0.10);
+    border-radius: 9px;
+    margin: 2px 0 1px 2px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.20);
 }
 
 #memory,
@@ -141,14 +143,16 @@ window#waybar {
 
 /* center start ------------------------------------------------------------ */
 .modules-center {
-    background: @base01;
-    padding: 4px 0;
-    border-radius: 12px;
-    margin: 3px 0 2px 0;
+    background: rgba(48, 48, 48, 0.78);
+    padding: 2px 0;
+    border: 1px solid rgba(238, 255, 255, 0.10);
+    border-radius: 9px;
+    margin: 2px 0 1px 0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.20);
 }
 
 #workspaces button {
-    margin: 0 4px;
+    margin: 0 2px;
     color: @base04;
     background: transparent;
     border-radius: 12px;
@@ -174,10 +178,12 @@ window#waybar {
 
 /* right start ------------------------------------------------------------- */
 .modules-right {
-    background: @base01;
-    padding: 0 8px;
-    border-radius: 12px;
-    margin: 3px 3px 2px 0;
+    background: rgba(48, 48, 48, 0.78);
+    padding: 0 6px;
+    border: 1px solid rgba(238, 255, 255, 0.10);
+    border-radius: 9px;
+    margin: 2px 2px 1px 0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.20);
 }
 
 #backlight,
@@ -210,7 +216,7 @@ window#waybar {
 
 #clock {
     margin-right: 0;
-    padding: 0 6px;
+    padding: 0 4px;
 }
 
 #custom-power {
@@ -226,12 +232,13 @@ window#waybar {
 
 /* tooltip start ----------------------------------------------------------- */
 tooltip {
-    background: rgba(48, 48, 48, 0.99);
+    background: rgba(48, 48, 48, 0.90);
     /* @base01 with alpha */
     color: @base05;
 
-    border-radius: 12px;
-    border: 1px solid @base03;
+    border-radius: 9px;
+    border: 1px solid rgba(238, 255, 255, 0.12);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.24);
 }
 
 tooltip label {
@@ -247,16 +254,16 @@ menuitem {
 }
 
 menu {
-    background: rgba(48, 48, 48, 0.99);
+    background: rgba(48, 48, 48, 0.90);
     color: @base05;
-    border: 1px solid @base03;
-    border-radius: 12px;
-    padding: 8px;
+    border: 1px solid rgba(238, 255, 255, 0.12);
+    border-radius: 9px;
+    padding: 6px;
 }
 
 decoration {
     border: none;
-    border-radius: 12px;
+    border-radius: 9px;
     box-shadow: none;
     background: transparent;
 }
@@ -267,8 +274,8 @@ menuitem {
 }
 
 menuitem label {
-    font-size: 13px;
-    padding: 4px 8px;
+    font-size: 12px;
+    padding: 3px 6px;
     border-radius: 8px;
 }
 
