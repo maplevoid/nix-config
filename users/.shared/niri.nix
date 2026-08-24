@@ -20,7 +20,22 @@
     swaylock-effects # sway lock
     swayidle # sway idle
     xrdb # X resources database utility
+    wtype # type/paste into focused Wayland window
   ];
+
+  systemd.user.services.voicein = {
+    Unit = {
+      Description = "voicein speech-to-text daemon";
+      PartOf = ["graphical-session.target"];
+      After = ["graphical-session.target"];
+    };
+    Service = {
+      ExecStart = "%h/.local/bin/voicein daemon";
+      Restart = "on-failure";
+      RestartSec = 2;
+    };
+    Install.WantedBy = ["graphical-session.target"];
+  };
 
   # scaling and rendering issues under Xwayland [https://github.com/Supreeeme/xwayland-satellite/issues/301]
   xresources.properties = {

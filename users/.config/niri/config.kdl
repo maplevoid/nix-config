@@ -658,4 +658,6 @@ binds {
 
     // My bindings
     Super+V { spawn "copyq" "show"; }
+    Super+Shift+V hotkey-overlay-title="Voice input: toggle" { spawn "voicein" "toggle"; }
+    Super+Shift+C hotkey-overlay-title="Voice input: cancel" { spawn "voicein" "cancel"; }
 }
