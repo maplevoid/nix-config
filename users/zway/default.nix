@@ -13,6 +13,8 @@ in {
     ../.shared/stylix.nix
   ];
 
+  services.voicein.enable = true;
+
   home = {
     inherit username;
     inherit homeDirectory;

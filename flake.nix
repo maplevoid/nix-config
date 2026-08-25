@@ -35,6 +35,9 @@
       url = "github:can1357/oh-my-pi/326d24bd40d9858e24e1036ae739c27c72eeb543";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+
+    # voicein: Niri push-to-toggle speech-to-text (private repo; SSH)
+    voicein.url = "git+ssh://git@github.com/maplevoid/voicein.git";
   };
 
   outputs = inputs @ {
@@ -78,6 +81,7 @@
 
             inputs.nix-flatpak.homeManagerModules.nix-flatpak
             inputs.stylix.homeModules.stylix
+            inputs.voicein.homeManagerModules.default
           ];
         }
       ];

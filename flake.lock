@@ -457,6 +457,20 @@
         "type": "github"
       }
     },
+    "nixpkgs_3": {
+      "locked": {
+        "lastModified": 1787360063,
+        "narHash": "sha256-dt4WdcvsA8/RCe+VZZwqU0X+XMM3wBbGCWA0/sFWzGo=",
+        "rev": "2c423e03bbafcff28bfadc6781a4a8257f205cb5",
+        "revCount": 1059570,
+        "type": "tarball",
+        "url": "https://api.flakehub.com/f/pinned/NixOS/nixpkgs/0.1.1059570%2Brev-2c423e03bbafcff28bfadc6781a4a8257f205cb5/01a02a8f-3451-79e3-b07d-567cd000a289/source.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://flakehub.com/f/NixOS/nixpkgs/0.1"
+      }
+    },
     "nur": {
       "inputs": {
         "flake-parts": [
@@ -518,7 +532,8 @@
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "oh-my-pi": "oh-my-pi",
-        "stylix": "stylix"
+        "stylix": "stylix",
+        "voicein": "voicein"
       }
     },
     "rust-overlay": {
@@ -742,6 +757,24 @@
         "owner": "numtide",
         "repo": "treefmt-nix",
         "type": "github"
+      }
+    },
+    "voicein": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_3"
+      },
+      "locked": {
+        "lastModified": 1787676785,
+        "narHash": "sha256-YOin7xejig+O1yZGvj+SYZTH5+w9jJgnXevQwAyi9jM=",
+        "ref": "refs/heads/master",
+        "rev": "bc645619f2349f94a191a07842291921328134de",
+        "revCount": 30,
+        "type": "git",
+        "url": "ssh://git@github.com/maplevoid/voicein.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/maplevoid/voicein.git"
       }
     }
   },
