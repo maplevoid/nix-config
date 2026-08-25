@@ -764,11 +764,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1787676785,
-        "narHash": "sha256-YOin7xejig+O1yZGvj+SYZTH5+w9jJgnXevQwAyi9jM=",
+        "lastModified": 1787678637,
+        "narHash": "sha256-46SyaYpUDkiuKlEh/at29f0hdgIJ00I/MdOIfXe1u6c=",
         "ref": "refs/heads/master",
-        "rev": "bc645619f2349f94a191a07842291921328134de",
-        "revCount": 30,
+        "rev": "9a99c383d360eb8b510965139f7bdeb0d58cc7d0",
+        "revCount": 31,
         "type": "git",
         "url": "ssh://git@github.com/maplevoid/voicein.git"
       },

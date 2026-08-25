@@ -36,7 +36,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
-    # voicein: Niri push-to-toggle speech-to-text (private repo; SSH)
+    # voicein: Niri push-to-toggle STT. Switch to github:maplevoid/voicein after the repo is public.
     voicein.url = "git+ssh://git@github.com/maplevoid/voicein.git";
   };
 
