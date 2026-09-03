@@ -11,8 +11,10 @@ in {
     ../.shared/fcitx5.nix
     ../.shared/niri.nix
     ../.shared/stylix.nix
+    ../.shared/pi.nix
   ];
 
+  services.scribe.enable = true;
   services.voicein.enable = true;
 
   home = {
@@ -32,7 +34,7 @@ in {
       ripgrep
       lm_sensors
       ffmpeg-full
-      omp
+      mosh
 
       # from unstable
       unstable.opencode

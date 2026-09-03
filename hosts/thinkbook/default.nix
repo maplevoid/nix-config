@@ -32,12 +32,21 @@
     username
   ];
 
+  nix.settings.extra-substituters = [
+    "https://pi.cachix.org"
+    "https://nix-community.cachix.org"
+  ];
+  nix.settings.extra-trusted-public-keys = [
+    "pi.cachix.org-1:lGeoGJaZ5ZDabuRzkcD5EBTNnDM4HJ1vqeOxlWk1Flk="
+    "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+  ];
+
   # allow unfree packages
   nixpkgs.config.allowUnfree = true;
   # overlays
   nixpkgs.overlays = [
     inputs.chinese-fonts.overlays.default
-    inputs.oh-my-pi.overlays.default
+    inputs.pi.overlays.default
     (import ../../overlays/hmcl.nix)
     (import ../../overlays/pkgs-unstable.nix {inherit inputs;})
   ];

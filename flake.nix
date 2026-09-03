@@ -30,14 +30,14 @@
     nix-ld.url = "github:Mic92/nix-ld";
     nix-ld.inputs.nixpkgs.follows = "nixpkgs";
 
-    # oh-my-pi (omp) coding agent, pinned rev includes official flake support
-    oh-my-pi = {
-      url = "github:can1357/oh-my-pi/326d24bd40d9858e24e1036ae739c27c72eeb543";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
 
-    # voicein: Niri push-to-toggle STT. Switch to github:maplevoid/voicein after the repo is public.
-    voicein.url = "git+ssh://git@github.com/maplevoid/voicein.git";
+    # unofficial nix flake for pi (https://github.com/earendil-works/pi)
+    pi.url = "github:lukasl-dev/pi.nix";
+    pi.inputs.nixpkgs.follows = "nixpkgs-unstable";
+
+    # voicein + scribe: local checkouts. Do not commit these path pins.
+    scribe.url = "path:/home/zway/dev/scribe";
+    voicein.url = "path:/home/zway/dev/voicein";
   };
 
   outputs = inputs @ {
@@ -81,7 +81,9 @@
 
             inputs.nix-flatpak.homeManagerModules.nix-flatpak
             inputs.stylix.homeModules.stylix
+            inputs.scribe.homeManagerModules.default
             inputs.voicein.homeManagerModules.default
+            inputs.pi.homeModules.default
           ];
         }
       ];
