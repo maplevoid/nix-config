@@ -35,9 +35,6 @@
     pi.url = "github:lukasl-dev/pi.nix";
     pi.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
-    # voicein + scribe: local checkouts. Do not commit these path pins.
-    scribe.url = "path:/home/zway/dev/scribe";
-    voicein.url = "path:/home/zway/dev/voicein";
   };
 
   outputs = inputs @ {
@@ -81,8 +78,6 @@
 
             inputs.nix-flatpak.homeManagerModules.nix-flatpak
             inputs.stylix.homeModules.stylix
-            inputs.scribe.homeManagerModules.default
-            inputs.voicein.homeManagerModules.default
             inputs.pi.homeModules.default
           ];
         }

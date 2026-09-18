@@ -14,9 +14,6 @@ in {
     ../.shared/pi.nix
   ];
 
-  services.scribe.enable = true;
-  services.voicein.enable = true;
-
   home = {
     inherit username;
     inherit homeDirectory;
