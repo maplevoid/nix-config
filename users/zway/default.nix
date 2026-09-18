@@ -80,7 +80,7 @@ in {
     ug = "sudo nixos-rebuild switch --flake ~/.nix-config#thinkbook";
     up = "sudo nix flake update --flake ~/.nix-config && flatpak --user update -y";
     ut = "sudo nixos-rebuild test --flake ~/.nix-config#thinkbook";
-    reboot-to-win = "systemctl reboot --boot-loader-entry=auto-windows";
+    reboot-to-win = "sudo grub-reboot Windows && reboot";
     clean = "sudo nix-collect-garbage -d";
   };
 
