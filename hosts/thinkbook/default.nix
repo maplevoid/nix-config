@@ -49,6 +49,7 @@
     inputs.pi.overlays.default
     (import ../../overlays/hmcl.nix)
     (import ../../overlays/pkgs-unstable.nix {inherit inputs;})
+    (import ../../overlays/linux-firmware.nix)
   ];
 
   # list packages installed in system profile
