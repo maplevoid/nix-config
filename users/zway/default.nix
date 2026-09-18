@@ -21,6 +21,7 @@ in {
     sessionVariables.QTSCRCPY_CONFIG_PATH = "${homeDirectory}/.config/qtscrcpy";
 
     packages = with pkgs; [
+      devenv
       entr
       conda
       virt-manager
@@ -85,15 +86,19 @@ in {
   programs.starship.enable = true;
   programs.starship.enableBashIntegration = true;
 
-  # git config
+  # git config (GitHub: maplevoid)
   programs.git.enable = true;
-  programs.git.settings.user.name = "zway";
-  programs.git.settings.user.email = "zfungew1@gmail.com";
+  programs.git.settings.user.name = "maplevoid";
+  programs.git.settings.user.email = "2078501847@qq.com";
+
+  # GitHub CLI — after rebuild: gh auth login --hostname github.com --git-protocol ssh --skip-ssh-key
+  programs.gh.enable = true;
+  programs.gh.settings.git_protocol = "ssh";
 
   # jj-vcs
   programs.jujutsu.enable = true;
-  programs.jujutsu.settings.user.name = "zway";
-  programs.jujutsu.settings.user.email = "zfungew1@gmail.com";
+  programs.jujutsu.settings.user.name = "maplevoid";
+  programs.jujutsu.settings.user.email = "2078501847@qq.com";
 
   # direnv
   programs.direnv.enable = true;
