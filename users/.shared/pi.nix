@@ -14,10 +14,11 @@
         "npm:pi-observational-memory"
         "npm:pi-permission-system"
         "npm:pi-zentui"
+        "npm:@dietrichgebert/ponytail"
       ];
 
-      defaultProvider = "xiaole-grok";
-      defaultModel = "grok-4.6";
+      defaultProvider = "820010-grok";
+      defaultModel = "grok-4.6-latest";
 
       followUpMode = "all";
       quietStartup = true;
