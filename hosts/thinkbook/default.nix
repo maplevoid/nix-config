@@ -100,7 +100,7 @@
     useOSProber = false;
     extraEntriesBeforeNixOS = true;
     default = "1";
-    configurationLimit = 15;
+    configurationLimit = 5;
     gfxmodeEfi = "1920x1200,1920x1080,auto";
     gfxpayloadEfi = "keep";
     splashImage = null;
