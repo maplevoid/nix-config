@@ -1,0 +1,39 @@
+{
+  "packages": [
+    "npm:pi-ask-user",
+    "npm:pi-permission-system",
+    "npm:pi-zentui",
+    "git:github.com/elpapi42/pi-observational-memory",
+    "git:github.com/fgrehm/pi-ollama-cloud",
+    "git:github.com/kui04/pi-ast-edit@dev",
+    "git:github.com/patlux/pi-commandcode-provider"
+  ],
+
+  "followUpMode": "all",
+  "quietStartup": true,
+  "steeringMode": "all",
+  "httpIdleTimeoutMs": 60000,
+  "npmCommand": [ "npm" ],
+  "tuiMode": "fullscreen",
+  "defaultTools":["+codemode"],
+
+  "observational-memory": {
+    "observeAfterTokens": 10000,
+    "reflectAfterTokens": 20000,
+    "compactAfterTokens": 81000,
+    "compactAfterTokensMode": "ratio",
+    "compactAfterTokensRatio": 0.618,
+    "observationsPoolMaxTokens": 20000,
+    "observationsPoolTargetTokens": 10000,
+    "agentMaxTurns": 16,
+    "model": { "thinking": "low" },
+    "passive": false,
+    "debugLog": false
+  },
+
+  "ast-edit": {
+    "traceEnabled": true,
+    "autoReflect": true,
+    "reflectAfterErrors": 5
+  }
+}

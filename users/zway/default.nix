@@ -11,7 +11,7 @@ in {
     ../.shared/fcitx5.nix
     ../.shared/niri.nix
     ../.shared/stylix.nix
-    ../.shared/pi.nix
+    ../.shared/agents
   ];
 
   home = {

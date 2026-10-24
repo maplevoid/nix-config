@@ -46,7 +46,7 @@
   # overlays
   nixpkgs.overlays = [
     inputs.chinese-fonts.overlays.default
-    inputs.pi.overlays.default
+    inputs.llm-agents.overlays.shared-nixpkgs
     (import ../../overlays/hmcl.nix)
     (import ../../overlays/pkgs-unstable.nix {inherit inputs;})
     (import ../../overlays/linux-firmware.nix)
