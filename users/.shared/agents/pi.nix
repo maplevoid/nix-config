@@ -65,11 +65,10 @@ in
   home.file.".pi/agent/npm/.npmrc".source = "${config}/.npmrc";
   home.file."Templates/pi-mcp.json".source = "${config}/mcp-template.json";
 
-  # reconcile pi's npm and git extensions on rebuild.
+  # reconcile pi's npm and git extensions on rebuild (run in background, non-blocking)
   home.activation.refreshPiNpm = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if ${pkgs.systemd}/bin/systemctl --user is-active --quiet graphical-session.target 2> /dev/null; then
-      ${pkgs.coreutils}/bin/timeout 180 ${pi}/bin/pi update --extensions -na ||
-        echo "pi update --extensions failed, leaving extensions as they were" >&2
+      (${pkgs.coreutils}/bin/timeout 180 ${pi}/bin/pi update --extensions -na || true) > /dev/null 2>&1 &
     fi
   '';
 }
