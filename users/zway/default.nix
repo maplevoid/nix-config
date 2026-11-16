@@ -66,6 +66,7 @@ in {
     "io.beekeeperstudio.Studio"
     "io.github.giantpinkrobots.flatsweep"
     "com.github.gmg137.netease-cloud-music-gtk"
+    "md.obsidian.Obsidian"
   ];
 
   # bash shell
