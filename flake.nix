@@ -34,6 +34,9 @@
     # ai coding agents and development tools
     llm-agents.url = "github:numtide/llm-agents.nix";
 
+    # hex local-first voice dictation
+    hex.url = "github:anomalyco/hex";
+
   };
 
   outputs = inputs @ {
@@ -77,6 +80,7 @@
 
             inputs.nix-flatpak.homeManagerModules.nix-flatpak
             inputs.stylix.homeModules.stylix
+            inputs.hex.homeManagerModules.hex
           ];
         }
       ];

@@ -104,4 +104,15 @@ in {
   # direnv
   programs.direnv.enable = true;
   programs.direnv.enableBashIntegration = true;
+
+  # hex local voice dictation
+  programs.hex = {
+    enable = true;
+    autostart = true;
+  };
+  systemd.user.services.hex.Service.Environment = [
+    "http_proxy=http://127.0.0.1:7897"
+    "https_proxy=http://127.0.0.1:7897"
+    "all_proxy=socks5://127.0.0.1:7897"
+  ];
 }
