@@ -50,6 +50,7 @@
     (import ../../overlays/hmcl.nix)
     (import ../../overlays/pkgs-unstable.nix {inherit inputs;})
     (import ../../overlays/linux-firmware.nix)
+    (import ../../overlays/hokum.nix)
   ];
 
   # list packages installed in system profile
@@ -88,32 +89,11 @@
     ];
   };
 
-  # bootloader: GRUB + Catppuccin so the dual-boot picker is graphical.
-  # Windows lives on the same ESP as NixOS (UUID from hardware.nix /boot).
-  boot.loader.timeout = 15;
-  boot.loader.systemd-boot.enable = false;
+  # bootloader: switch back to systemd-boot to save /boot space
+  boot.loader.timeout = 5;
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot.configurationLimit = 5;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.grub = {
-    enable = true;
-    device = "nodev";
-    efiSupport = true;
-    useOSProber = false;
-    extraEntriesBeforeNixOS = true;
-    default = "1";
-    configurationLimit = 5;
-    gfxmodeEfi = "1920x1200,1920x1080,auto";
-    gfxpayloadEfi = "keep";
-    splashImage = null;
-    theme = pkgs.catppuccin-grub.override {flavor = "mocha";};
-    extraEntries = ''
-      menuentry "Windows" --class windows --class os {
-        insmod part_gpt
-        insmod fat
-        search --no-floppy --fs-uuid --set=root DC62-A83A
-        chainloader /EFI/Microsoft/Boot/bootmgfw.efi
-      }
-    '';
-  };
 
   # systemd
   systemd.user.extraConfig = ''
