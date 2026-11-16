@@ -286,7 +286,7 @@ layout {
 // which may be more convenient to use.
 // See the binds section below for more spawn examples.
 
-spawn-at-startup "mako"
+spawn-at-startup "hokum" "service"
 spawn-at-startup "/home/zway/.config/waybar/cpu_temp.sh"
 spawn-at-startup "waybar"
 spawn-at-startup "awww-daemon" 
@@ -349,10 +349,13 @@ window-rule {
     default-window-height { fixed 450; }
 }
 
-// Keep Ghostty's transparent surface visible through the focus ring.
+// foot snaps its size to whole cells while it believes it is floating, and niri
+// only sends the tiled state by default with prefer-no-csd
 window-rule {
-    match app-id="com.mitchellh.ghostty"
-    draw-border-with-background false
+    match app-id="foot"
+    match app-id="footclient"
+
+    tiled-state true
 }
 
 // Enable rounded corners for all windows.
@@ -405,7 +408,7 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
-    Mod+T hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty"; }
+    Mod+T hotkey-overlay-title="Open a Terminal: foot" { spawn "foot"; }
     Mod+D hotkey-overlay-title="Run an Application: wofi" { spawn "flock" "-n" "/tmp/wofi.lock" "wofi" "--show" "drun"; }
     Super+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
 

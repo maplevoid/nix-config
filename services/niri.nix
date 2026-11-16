@@ -9,7 +9,7 @@
   programs.niri.useNautilus = true;
   programs.nautilus-open-any-terminal = {
     enable = true;
-    terminal = "ghostty";
+    terminal = "foot";
   };
   # nautilus trash and mounts backend
   services.gvfs.enable = true;
@@ -31,7 +31,6 @@
     ntfs3g
     nautilus
     file-roller # gnome archive manager
-    ghostty
   ];
 
   # hint Electron apps to use Wayland
@@ -41,6 +40,10 @@
   xdg.portal = {
     enable = true;
     xdgOpenUsePortal = true;
+    config.niri = {
+      default = ["gnome" "gtk"];
+      "org.freedesktop.impl.portal.GlobalShortcuts" = ["none"];
+    };
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
       # recommended by upstream, required for screencast support
