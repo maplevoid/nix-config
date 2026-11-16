@@ -1,5 +1,4 @@
 /* color scheme https://github.com/tinted-theming/schemes/blob/spec-0.11/base16/material-darker.yaml */
-/* font-size 12px */
 @define-color base00 #212121;
 @define-color base01 #303030;
 @define-color base02 #353535;
@@ -23,7 +22,8 @@
     font-family: "Adwaita Sans", "Noto Sans", sans-serif;
     font-size: 12px;
     font-weight: 600;
-    transition: color 0.3s ease;
+    transition: color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     font-feature-settings: "tnum";
 }
 
@@ -50,37 +50,37 @@ window#waybar {
 #custom-power {
     background: transparent;
     color: @base05;
-    padding: 0 5px;
-    margin-right: 4px;
+    padding: 0px 6px;
+    margin-right: 6px;
 }
 
 /* min-width start --------------------------------------------------------- */
-#cpu #memory,
+#cpu,
+#memory,
 #temperature,
 #battery,
 #backlight {
-    min-width: 2rem;
+    min-width: 2.5rem;
 }
 
 #power-profiles-daemon,
 #custom-power {
-    min-width: 0.9rem;
+    min-width: 1rem;
 }
 
 #pulseaudio {
-    min-width: 6rem;
+    min-width: 7rem;
 }
 
 /* min-width end ----------------------------------------------------------- */
 
 /* left start -------------------------------------------------------------- */
 .modules-left {
-    background: rgba(48, 48, 48, 0.78);
-    padding: 0 6px;
-    border: 1px solid rgba(238, 255, 255, 0.10);
-    border-radius: 9px;
-    margin: 2px 0 1px 2px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.20);
+    background: @base01;
+    padding: 0 8px;
+    border-radius: 12px;
+    margin: 3px 0 2px 3px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 #memory,
@@ -143,20 +143,19 @@ window#waybar {
 
 /* center start ------------------------------------------------------------ */
 .modules-center {
-    background: rgba(48, 48, 48, 0.78);
-    padding: 2px 0;
-    border: 1px solid rgba(238, 255, 255, 0.10);
-    border-radius: 9px;
-    margin: 2px 0 1px 0;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.20);
+    background: @base01;
+    padding: 4px 0;
+    border-radius: 12px;
+    margin: 3px 0 2px 0;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 #workspaces button {
-    margin: 0 2px;
+    margin: 0 4px;
     color: @base04;
     background: transparent;
     border-radius: 12px;
-    transition: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 #workspaces button:hover {
@@ -178,12 +177,11 @@ window#waybar {
 
 /* right start ------------------------------------------------------------- */
 .modules-right {
-    background: rgba(48, 48, 48, 0.78);
-    padding: 0 6px;
-    border: 1px solid rgba(238, 255, 255, 0.10);
-    border-radius: 9px;
-    margin: 2px 2px 1px 0;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.20);
+    background: @base01;
+    padding: 0 8px;
+    border-radius: 12px;
+    margin: 3px 3px 2px 0;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 #backlight,
@@ -216,7 +214,7 @@ window#waybar {
 
 #clock {
     margin-right: 0;
-    padding: 0 4px;
+    padding: 0 6px;
 }
 
 #custom-power {
@@ -232,17 +230,18 @@ window#waybar {
 
 /* tooltip start ----------------------------------------------------------- */
 tooltip {
-    background: rgba(48, 48, 48, 0.90);
-    /* @base01 with alpha */
+    background: rgba(48, 48, 48, 0.99);
     color: @base05;
 
-    border-radius: 9px;
-    border: 1px solid rgba(238, 255, 255, 0.12);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.24);
+    border-radius: 12px;
+    border: 1px solid @base03;
+    padding: 6px 10px;
+    margin: 0 4px;
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 tooltip label {
-    font-family: "Noto Sans", sans-serif;
+    font-family: "Sarasa Mono SC", "Noto Sans Mono CJK SC", monospace;
 }
 
 /* tooltip end ------------------------------------------------------------- */
@@ -254,16 +253,16 @@ menuitem {
 }
 
 menu {
-    background: rgba(48, 48, 48, 0.90);
+    background: rgba(48, 48, 48, 0.99);
     color: @base05;
-    border: 1px solid rgba(238, 255, 255, 0.12);
-    border-radius: 9px;
-    padding: 6px;
+    border: 1px solid @base03;
+    border-radius: 12px;
+    padding: 8px;
 }
 
 decoration {
     border: none;
-    border-radius: 9px;
+    border-radius: 12px;
     box-shadow: none;
     background: transparent;
 }
@@ -274,8 +273,7 @@ menuitem {
 }
 
 menuitem label {
-    font-size: 12px;
-    padding: 3px 6px;
+    padding: 4px 8px;
     border-radius: 8px;
 }
 
