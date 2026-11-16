@@ -75,9 +75,9 @@ in {
   programs.bash.shellAliases = {
     nv = "nvidia-offload";
     nf = "nix flake new -t github:nix-community/nix-direnv";
-    ug = "sudo nixos-rebuild switch --flake ~/.nix-config#thinkbook";
-    up = "sudo nix flake update --flake ~/.nix-config && flatpak --user update -y";
-    ut = "sudo nixos-rebuild test --flake ~/.nix-config#thinkbook";
+    ug = "sudo env http_proxy=http://127.0.0.1:7897 https_proxy=http://127.0.0.1:7897 nixos-rebuild switch --flake ~/.nix-config#thinkbook";
+    up = "sudo env http_proxy=http://127.0.0.1:7897 https_proxy=http://127.0.0.1:7897 nix flake update --flake ~/.nix-config && flatpak --user update -y";
+    ut = "sudo env http_proxy=http://127.0.0.1:7897 https_proxy=http://127.0.0.1:7897 nixos-rebuild test --flake ~/.nix-config#thinkbook";
     reboot-to-win = "systemctl reboot --boot-loader-entry=auto-windows";
     clean = "sudo nix-collect-garbage -d";
   };
