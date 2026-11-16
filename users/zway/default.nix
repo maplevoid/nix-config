@@ -34,6 +34,7 @@ in {
       lm_sensors
       ffmpeg-full
       mosh
+      zellij
 
       # from unstable
       unstable.opencode
