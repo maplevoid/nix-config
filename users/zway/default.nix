@@ -24,6 +24,8 @@ in
     sessionVariables.QTSCRCPY_CONFIG_PATH = "${homeDirectory}/.config/qtscrcpy";
 
     packages = with pkgs; [
+      # rebuild the sing-box config from the airport subscription
+      (callPackage ./singbox { })
       devenv
       entr
       conda
@@ -78,7 +80,6 @@ in
   programs.bash.initExtra = "fastfetch -l linux";
   home.sessionPath = [ "$HOME/.local/bin" ];
   programs.bash.shellAliases = {
-    nv = "nvidia-offload";
     nf = "nix flake new -t github:nix-community/nix-direnv";
     ug = "sudo nixos-rebuild switch --flake ~/.nix-config#thinkbook";
     up = "sudo nix flake update --flake ~/.nix-config && flatpak --user update -y";
