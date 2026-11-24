@@ -3,7 +3,8 @@
   pkgs,
   username,
   ...
-}: {
+}:
+{
   imports = [
     # include the results of the hardware scan
     ./hardware.nix
@@ -18,7 +19,20 @@
     ../../services/niri.nix
     ../../services/ly.nix
     ../../services/sunshine.nix
+    ../../services/sing-box.nix
+    ../../services/xdg-portal.nix
   ];
+
+  # sing-box hijacks port 53 through its tun, but tailscaled forwards DNS
+  # through its own tunnel, where the answer is poisoned before sing-box sees
+  # it. ts.net keeps resolving through the ts-dns server in
+  # /etc/sing-box/config.json.
+  services.tailscale.extraSetFlags = [ "--accept-dns=false" ];
+
+  # the router advertises a link-local IPv6 resolver that never enters the tun.
+  networking.resolvconf.extraConfig = ''
+    name_server_blacklist='0.0.0.0 fe80::* fe80:*'
+  '';
 
   # flakes
   nix.settings.experimental-features = [
@@ -41,6 +55,9 @@
     "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
   ];
 
+  # auto optimize the store to reduce fragmentation and reclaim space
+  nix.settings.auto-optimise-store = true;
+
   # allow unfree packages
   nixpkgs.config.allowUnfree = true;
   # overlays
@@ -48,7 +65,7 @@
     inputs.chinese-fonts.overlays.default
     inputs.llm-agents.overlays.shared-nixpkgs
     (import ../../overlays/hmcl.nix)
-    (import ../../overlays/pkgs-unstable.nix {inherit inputs;})
+    (import ../../overlays/pkgs-unstable.nix { inherit inputs; })
     (import ../../overlays/linux-firmware.nix)
     (import ../../overlays/hokum.nix)
   ];
@@ -56,6 +73,8 @@
   # list packages installed in system profile
   environment.systemPackages = with pkgs; [
     nil
+    nixd
+    gnumake
     neovim
     wget
     git
@@ -106,12 +125,12 @@
     {
       device = "/var/lib/swapfile";
       size = 16 * 1024; # 16 GB
-      options = ["discard"]; # equivalent to swapon --discard
+      options = [ "discard" ]; # equivalent to swapon --discard
     }
   ];
   # this is needed for zswap lz4 algorithm
   boot.initrd.systemd.enable = true;
-  boot.initrd.kernelModules = ["lz4"];
+  boot.initrd.kernelModules = [ "lz4" ];
   boot.kernelParams = [
     "zswap.enabled=1" # enables zswap
     "zswap.compressor=lz4" # compression algorithm

@@ -1,8 +1,15 @@
-{pkgs, ...}: {
+{ pkgs, ... }: {
   config = {
     # set your time zone
     time.timeZone = "Asia/Shanghai";
     time.hardwareClockInLocalTime = true;
+
+    # keep NTP off the tun so the clock still syncs when the proxy is down.
+    services.timesyncd.servers = [
+      "203.107.6.88"
+      "106.55.184.199"
+      "113.141.164.38"
+    ];
 
     # select internationalisation properties
     i18n.defaultLocale = "en_US.UTF-8";
