@@ -1,148 +1,176 @@
 ---
 name: tydd
 description: >-
-  Enforces a strict two-phase Type-Driven Development (TyDD) workflow where the agent designs domain types, data
-  structures, interfaces, function signatures, and semantic skeleton comments (`TODO`, `FIXME`, `SAFETY-INVARIANT`)
-  FIRST, verifies that the skeleton type-checks, and pauses for user review and sign-off before writing implementation
-  logic. Use whenever the user mentions Type-Driven Development, TyDD, `tydd`, types-first coding, signature-first
-  design, designing types or interfaces before implementation, reviewing data models or API contracts before coding, or
-  asks not to write all implementation code in one shot (e.g., "stub out the types and signatures first", "let me review
-  the types before you implement", "model the domain first").
+  Design domain types, state machines, boundary parsers, and API signatures before writing implementation code so
+  illegal states fail to compile. Apply this workflow when modeling data or workflows, parsing untrusted inputs,
+  refactoring primitive obsession, boolean flags, `any`, casts, or null checks, or auditing type safety—even if the user
+  never mentions "TyDD". Do not use for prose, visual styling, or tasks without code or schemas.
 ---
 
-# Type-Driven Development (TyDD)
+# TyDD — Type-Driven Development
 
-## Role & Philosophy
+## Role
 
-Type-Driven Development (TyDD) treats types as executable specifications and the primary design language of software.
-Instead of generating hundreds of lines of implementation code in a single turn — which often bakes in flawed domain
-assumptions, primitive obsession, or leaky abstractions that are expensive to untangle — collaborate with the user in
-**two gated phases**:
+Practice **Type-Driven Development (TyDD)**: treat the type system as a primary design tool and machine-checked
+specification before writing implementation code, never as annotations bolted on afterward. Keep principles
+language-agnostic and realize them idiomatically in the project's actual language and type checker. Use types to
+eliminate entire bug classes and reduce cognitive load—never introduce unreadable type gymnastics.
 
-1. **Phase 1: Type Modeling & Semantic Skeleton (Stop for Review)** — Define precise domain types, state transitions,
-   interfaces/traits, and function signatures with type-checkable holes and structured skeleton comments, verify that
-   the skeleton compiles/type-checks, and **stop for user feedback**.
-2. **Phase 2: Hole-Driven Implementation** — Only after the user approves or refines the types and signatures, fill in
-   the runtime implementation logic step by step.
+## Core workflow
 
-The judgment calls below are grounded in established type-systems literature — Edwin Brady (_Type-Driven Development
-with Idris_), Yaron Minsky (Jane Street), Scott Wlaschin (_Domain Modeling Made Functional_), Alexis King (_"Parse,
-don't validate"_), and Will Crichton (_Type-Driven API Design in Rust_). Full language-specific patterns and complete
-Before/After Phase 1 examples are in `references/principles-and-patterns.md`.
+Follow the **Type -> Confirm -> Define & Refine -> Verify** loop below. For **type reviews or audits** of existing code,
+run Steps 1–2 plus the escape-hatch audit in `references/type-system-adaptation.md`, then report findings and proposed
+refined signatures without modifying files unless asked.
 
-## Core Design Principles
+### Step 1 — Establish the language, type checker, and strictness baseline
 
-Apply these four foundational principles whenever modeling types in Phase 1:
+Never invent type syntax or import idioms from a different language without checking what the project actually uses.
+Gather evidence in this order:
 
-1. **Make Illegal States Unrepresentable (Yaron Minsky & Scott Wlaschin)**: Replace loosely coupled boolean flags,
-   nullable fields, and stringly-typed status codes with **sum types** (tagged unions / enums) and **product types**
-   (structs / records) whose cardinality matches the exact set of valid domain states. If a field only exists in one
-   state (e.g., `tracking_number` only exists when an order is `Shipped`), attach it to that variant instead of making
-   it optional on a flat record.
-2. **Parse, Don't Validate (Alexis King)**: Do not write validation functions that check raw primitives (`string`,
-   `int`, `list`) and return `void` or `bool`, discarding the proof that the check succeeded ("shotgun parsing"). Parse
-   unstructured input at the system boundary into **refined domain types** (newtypes, branded types, non-empty
-   collections, or smart constructors with private fields) that carry the invariant in the type system.
-3. **Avoid Primitive Obsession & Cardinality Mismatch (Will Crichton)**: Wrap domain identifiers (`UserId`, `OrderId`),
-   quantities (`CentAmount`, `Ratio`), and verified inputs (`EmailAddress`) in distinct types so callers cannot swap
-   them accidentally. Encode sequential protocol order via typestates (`Invoice<Draft>` -> `Invoice<Approved>`) when
-   operations are only legal in specific lifecycle stages.
-4. **Total Signatures & Typed Holes (Edwin Brady)**: Every signature should be **total** — every possible input maps to
-   a valid output or an explicit domain error variant in the return type (`Result<T, DomainError>`), never an
-   undocumented exception or boolean. Populate function bodies with language-native typed holes so the compiler verifies
-   data flow across module boundaries before you write algorithm details.
+1. If the user or conversation named the language, type checker, or schema library, treat that as authoritative.
+2. Otherwise, inspect the project manifest, lockfile, and type-checker config (for example `tsconfig.json`,
+   `Cargo.toml`, `pyproject.toml`, `pyrightconfig.json`, `mypy.ini`, `go.mod`, `pom.xml`, `build.gradle`, `*.cabal`)
+   plus nearby source files to determine:
+   - The active language version and static type checker (and how to invoke it locally).
+   - Active strictness flags (e.g., TypeScript `strict` / `noUncheckedIndexedAccess`, Python `pyright` strictness or
+     `mypy --strict`, Rust lints, Java/Kotlin nullability annotations).
+   - Existing domain primitives, error/Result conventions, and boundary-parsing libraries (e.g., Zod, Valibot, Pydantic,
+     serde, aeson) so new types fit the codebase rather than inventing a parallel style.
+3. If no repo exists yet or the target language/toolchain is genuinely ambiguous, ask the user before writing types.
+4. Load `references/type-system-adaptation.md` when choosing idiomatic encodings for the project's language tier (rich
+   ADT, mainstream OOP/structural, minimal static like Go, or gradually typed like Python).
 
-## The Two-Phase Workflow
+### Step 2 — Map boundaries, invariants, and state transitions
 
-### Phase 1: Domain Types, Signatures & Semantic Skeleton (MANDATORY STOP)
+Before writing code, analyze the problem space and separate what belongs in types from what belongs elsewhere. Read
+`references/modeling-patterns.md` for the full pattern catalog and anti-over-typing rules.
 
-When given a feature, module, refactoring, or coding request under TyDD, **do not write runtime business logic or
-algorithm bodies in your first turn**. Execute Steps 1–5 and pause:
+Identify five things explicitly:
 
-#### Step 1 — Inspect the project's type system & conventions
+- **Trust boundaries** — where untrusted, raw, or serialized data enters (HTTP/RPC payloads, CLI args, env vars, files,
+  DB rows, external SDKs). **Parse, don't validate**: convert raw inputs into proof-carrying domain types once at the
+  boundary, instead of scattering defensive checks through core logic.
+- **Domain invariants & cardinality** — list every rule that must hold (e.g., non-empty list, positive amount, same
+  currency, verified email, mutually exclusive fields). Compare the type's **cardinality** (number of representable
+  values) against the number of legal domain states; close the gap with sum types, newtypes/brands, and smart
+  constructors so **illegal states are unrepresentable**.
+- **Workflows & state transitions** — if an entity or protocol moves through phases (e.g.,
+  `Draft -> Submitted -> Approved | Rejected`), model each phase as a distinct type or tagged state and each transition
+  as a function signature from one state to the next. Eliminate **boolean blindness**: replace correlated booleans and
+  nullable field clusters (`isPaid`, `paidAt?`, `receiptId?`) with explicit variants carrying their exact data.
+- **Failure modes** — distinguish expected domain errors (encoded in return types such as `Result`/`Either` or error
+  unions) from programming bugs / broken invariants.
+- **What types should NOT encode** — recognize the ceiling of the host type system. Cross-record uniqueness, arithmetic
+  formulas, business rates, and invariants that require opaque type-level programming belong in boundary parsers,
+  runtime assertions, or property-based/unit tests. Stop encoding in the type system the moment complexity harms
+  readability or compiler error clarity more than the bug class it prevents.
 
-Before writing any types, establish the target language, compiler/type-checker, and idioms from repository evidence:
+### Step 3 — Type: Write the type skeleton and TODO stubs in the codebase
 
-- Check existing modules for error-handling conventions (`thiserror`, custom `Result` types, union returns), naming
-  style, visibility rules, and serialization boundaries.
-- If the request is standalone (no repo or file specified), match the language specified in the user's prompt.
+Write the domain types, function signatures, and `TODO` stubs directly in the target source files **before** writing any
+implementation bodies (skip file edits only when no repository exists yet, for read-only audits, or when the user
+explicitly asks for a design-only proposal in chat):
 
-#### Step 2 — Model the domain types & interfaces
+1. Define value objects / newtypes, algebraic data types (products for AND, sums for OR), smart-constructor signatures,
+   workflow step signatures, and explicit error types using the domain's terminology.
+2. Stub every function body with the language's idiomatic **typed hole** (`todo!()`, `unimplemented!()`, `undefined` /
+   `_hole` in Haskell, `throw new Error("TODO: <step>")` in TypeScript, `raise NotImplementedError("TODO: <step>")` in
+   Python, `panic("TODO: <step>")` in Go) so the architecture compiles and type-checks while implementation remains
+   deferred. For large workflows, decompose complex functions into smaller typed helper signatures with their own `TODO`
+   stubs.
+3. Run the type checker or compiler on the type skeleton (when a local environment is available) to verify that the
+   contracts compose cleanly with no circularity, variance, or ownership conflicts before review.
 
-1. **Domain primitives & smart constructors**: Define newtypes, branded types, or private-field structs with `parse` /
-   `try_new` constructors for boundary inputs that have invariants (non-empty strings, bounded numbers, validated IDs).
-2. **State & entity sum types**: Model mutually exclusive states and domain lifecycles as enums or discriminated unions
-   with state-specific payloads.
-3. **Explicit error sum types**: Define domain-specific error enums/unions for each boundary or operation so failure
-   modes are self-documenting in the signature.
-4. **Traits / Interfaces / Protocols & Function Signatures**: Write top-level function, method, and interface signatures
-   connecting the domain types. Prefer small, consumer-focused interfaces and pure domain functions separated from I/O.
+### Step 4 — Contract gate: Confirm with the user before implementing
 
-#### Step 3 — Populate bodies with typed holes & structured skeleton comments
+**After the type skeleton passes the type checker, stop and present the type contract to the user for approval before
+filling any `TODO` body — every time.** Skip this checkpoint only when the user has explicitly opted out in the current
+conversation (for example "just implement it" or "skip type review"). Even for small tasks, let the user decide whether
+to skip.
 
-Replace every runtime implementation body (smart constructors, parsers, state transitions, and business logic) with a
-**type-checkable hole** (`todo!("...")` in Rust, `throw new Error("TODO")` in TypeScript,
-`raise NotImplementedError("...")` in Python, `panic("TODO")` in Go, `_` in Haskell — see
-`references/principles-and-patterns.md` for language idioms). Trivial one-line read-only field accessors (`&self.0`,
-`return self._value`) and `Protocol`/trait method signatures (`...`) do not need `todo!()` stubs.
+Present a concise, scannable summary:
 
-Inside each stubbed function (and above non-obvious types), write 2–5 concise, high-signal comments using this taxonomy
-(adjusting comment syntax `//` or `#` to the language):
+1. **Type & signature summary** — point to the added or updated files (and include a concise snippet when useful)
+   showing domain types, state transitions, smart constructors, and public signatures.
+2. **Invariant allocation** — brief table or list showing which invariants are enforced at _compile time_ (type
+   structure), at _boundary parse time_ (smart constructor/parser), and _deferred to runtime/tests_ (and why).
+3. **Trade-offs & gaps** — any non-obvious modeling choice (e.g., tagged union vs. generic typestate, newtype vs. type
+   alias), strictness gaps in the project's config, or isolated boundary adapters.
 
-- `TODO(domain): <core invariant, state transition, or business rule the implementation will enforce>`
-- `TODO(edge-case): <specific boundary condition, concurrency hazard, idempotency rule, or failure mode to handle>`
-- `TODO(perf): <algorithmic complexity, zero-copy, batching, or allocation constraint — include only when relevant>`
-- `FIXME(design-question): <open trade-off, ambiguity, or policy question that needs the user's decision before Phase 2>`
-- `SAFETY-INVARIANT: <why a smart constructor or private field guarantees an invariant that static types alone cannot express>`
+Wait for the user to approve or request changes before proceeding to Step 5.
 
-#### Step 4 — Verify that the skeleton compiles / type-checks
+### Step 5 — Define, refine, and verify
 
-If you are working in a codebase or environment with a type-checker (`cargo check`, `tsc --noEmit`, `mypy --strict` /
-`pyright`, `go vet` / `go build`), run it on the Phase 1 skeleton and fix any type, lifetime, or import errors before
-presenting the skeleton to the user.
+Once the user approves the type contract:
 
-#### Step 5 — Present the Phase 1 design brief & stop for user sign-off
+1. **Fill `TODO` stubs incrementally** — start with boundary parsers and smart constructors, then pure core
+   transformations, then thin imperative/I/O adapters at the edges (functional core / imperative shell). Re-run the type
+   checker after each coherent slice so compiler feedback guides every step.
+2. **Refine types first when reality pushes back** — if implementation reveals an unmodeled case, missing error, or
+   awkward conversion, do not hack around it inside a function body. Refine the _type_ (confirm with the user first if
+   it alters an agreed public contract or domain rule), then let the compiler locate every downstream call site that
+   must update.
+3. **Verify mechanically** — confirm zero remaining `TODO` / typed-hole stubs and zero unapproved escape hatches (check
+   the audit table in `references/type-system-adaptation.md`), then run the project's actual type checker / compiler and
+   existing tests.
+4. **Close the loop with testing handoff** — summarize:
+   - What the type checker now proves statically (impossible state combinations, exhaustiveness, ID/unit separation,
+     call ordering).
+   - Any contract refinements made during implementation and why.
+   - Which behavioral or dynamic invariants remain outside the type system and should be verified by unit,
+     property-based, or integration tests (e.g., arithmetic formulas, ordering rules, parser round-trips
+     `parse(format(x)) == Ok(x)`, cross-record uniqueness, concurrency, and persistence — natural handoff to testing /
+     `tdd`).
 
-Conclude your turn with a concise **Phase 1 Design Brief**:
+## When the type checker fails: diagnose before weakening a type
 
-1. **Illegal states eliminated**: Briefly list which invalid combinations or primitive traps the new types prevent at
-   compile time.
-2. **Open design questions (`FIXME(design-question)`)**: Surface any trade-offs or domain ambiguities Marked in the
-   skeleton so the user can decide them directly.
-3. **Explicit pause**: Ask the user to review the types and signatures, answer any open questions, and confirm when to
-   proceed to Phase 2. **Stop your turn here.**
+Treat every type-checker error as a design signal, never as an obstacle to silence. An agreed type contract is a formal
+specification; weakening a type or inserting an escape hatch solely to pass the checker destroys the guarantees
+established in Steps 3–4.
 
----
+When the type checker rejects code, work through this sequence before changing any type:
 
-### Phase 2: Hole-Driven Implementation (After User Sign-Off)
+1. **Read the full diagnostic first** — identify the exact expected type, inferred type, variance/nullability/ownership
+   mismatch, and where the conflicting type originated.
+2. **Classify the root cause** — it is almost always one of four cases:
+   - _Implementation bug_ (the code violates the agreed contract) -> fix the implementation; keep the type intact.
+   - _Missing boundary parse_ (raw/unverified data leaked into the core) -> parse and narrow it at the trust boundary
+     instead of widening core signatures to accept raw or nullable inputs.
+   - _Domain model gap_ (the type genuinely missed a real state, error, or constraint) -> treat this as a **Refine**
+     event: explain the gap to the user, agree on the updated type before altering public contracts, and let the
+     compiler drive all affected call sites.
+   - _Typed-to-untyped interop boundary_ (FFI, reflection, untyped third-party SDK, wire deserialization) -> isolate the
+     conversion in a single small boundary adapter, validate the runtime shape before narrowing, and document the
+     soundness invariant in a brief comment.
+3. **Never take these shortcuts merely to make the checker pass**:
+   - Inserting `any`, unchecked casts (`as T`, `as unknown as T`, `cast()`), non-null assertions (`!`), `@ts-ignore` /
+     `@ts-expect-error`, or `# type: ignore` to silence a mismatch not proved safe.
+   - Replacing explicit `Result`/`Option` handling with `.unwrap()`, `.expect()`, or `unsafe` in domain/library code.
+   - Widening a domain type back to raw primitives (`string`, `int`, `bool`, `dict[str, Any]`, `map[string]any`) or
+     adding optional/nullable fields that re-introduce illegal states.
+   - Adding a catch-all wildcard (`default:`, `_ =>`) on a closed sum type purely to satisfy exhaustiveness, because
+     wildcards silently swallow future variants when the domain evolves.
+4. **Report every resolution explicitly** — state whether a failure was an implementation bug fixed under the contract,
+   a boundary parser added, or a type refinement (and why). Never return a clean compile with silent type weakenings.
 
-Proceed to Phase 2 **only** after the user approves the Phase 1 skeleton (or if the user explicitly instructed you to
-skip the review gate):
+## Quick reference — pattern selector
 
-1. **Apply type refinements first**: If the user requested changes to types, variants, or signatures, update the type
-   definitions first and let the compiler guide call-site updates.
-2. **Fill holes iteratively**: Replace each typed hole with runtime logic that satisfies the approved signature and its
-   `TODO(domain)` / `TODO(edge-case)` specifications.
-3. **Clean up temporary skeleton markers**: Delete resolved `TODO(...)` and `FIXME(...)` comments once the code itself
-   expresses that logic. Keep only permanent `SAFETY-INVARIANT` or rustdoc/docstring comments that explain _why_ a
-   non-obvious invariant holds.
-4. **Preserve type safety**: Never weaken Phase 1 types during Phase 2 with `any`, `as unknown as T`, unchecked casts,
-   `unsafe`, or `.unwrap()` on fallible domain operations unless explicitly justified and approved.
-5. **Verify**: Run the compiler, type-checker, and test suite to confirm all contracts hold.
+| Problem smell                                            | TyDD pattern                              | Reference                              |
+| -------------------------------------------------------- | ----------------------------------------- | -------------------------------------- |
+| Swappable primitives (`userId: string, orgId: string`)   | Newtype / Branded type                    | `references/modeling-patterns.md`      |
+| Repeated `if (!valid)` checks across internal functions  | Parse, don't validate + Smart constructor | `references/modeling-patterns.md`      |
+| Bag of booleans or optional fields that must co-occur    | Algebraic sum type (discriminated union)  | `references/modeling-patterns.md`      |
+| Predicate returns `bool` and caller re-checks / unwraps  | Defeat boolean blindness (return proof)   | `references/modeling-patterns.md`      |
+| Operations only valid in certain lifecycle stages        | Typestate / Phase-specific types          | `references/modeling-patterns.md`      |
+| Function can inspect/mutate more than its role requires  | Parametricity / narrow capabilities       | `references/modeling-patterns.md`      |
+| Legacy codebase with loose types around the target slice | Strangler type boundary                   | `references/modeling-patterns.md`      |
+| Cross-language encoding or strictness setup              | Tier 1–4 adaptation guide                 | `references/type-system-adaptation.md` |
 
-## Anti-Patterns to Avoid
+## Reference files
 
-| Anti-Pattern                                            | TyDD Replacement                                                                                                |
-| ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| Writing types and full implementation in the first turn | Stop after Phase 1 skeleton; wait for user sign-off unless explicitly told to skip review.                      |
-| Trivial comments (`// TODO: implement this`)            | Write specific `TODO(domain)` and `TODO(edge-case)` rules that the user can audit before coding.                |
-| 50 lines of commented-out pseudo-code inside a stub     | Keep stubs to 2–5 high-signal comment lines plus the language's typed hole expression.                          |
-| Returning `bool` or `void` from a validator             | Parse into a refined type (`Result<VerifiedEmail, EmailError>`) so the proof is preserved.                      |
-| Flat structs with mutually exclusive optional fields    | Use a sum type (enum / discriminated union) where each variant holds only its valid fields.                     |
-| Unreadable type-level gymnastics for simple constraints | Prefer private fields with smart constructors (`parse` / `try_new`) when type-level encoding hurts readability. |
+Load only the reference file relevant to the current step — do not load both upfront unless needed:
 
-## Reference Files
-
-- `references/principles-and-patterns.md` — Read when modeling complex state machines/typestates, looking up
-  language-specific typed holes (Rust, TypeScript, Python, Go, Haskell/Idris), or reviewing complete Before/After Phase
-  1 skeleton transformations.
+- `references/modeling-patterns.md` — Core TyDD patterns, cardinality audits, algebraic modeling, typestate, phantom
+  proofs, error pipelines, strangler boundaries for legacy code, and the anti-over-typing guardrail.
+- `references/type-system-adaptation.md` — Idiomatic realizations and strictness baselines across language tiers (Rust,
+  TypeScript, Python, Go, Java/Kotlin/Swift/C#, Haskell/OCaml/F#/Scala).

@@ -60,6 +60,8 @@ in
 
   # pi-specific configuration
   home.file.".pi/agent/extensions".source = "${config}/extensions";
+  home.file.".pi/agent/prompts".source = "${config}/prompts";
+  home.file.".pi/agent/agents".source = "${config}/agents";
   home.file.".pi/agent/pi-permissions.jsonc".source = "${config}/pi-permissions.jsonc";
   home.file.".pi/agent/zentui.json".source = "${config}/zentui.json";
   home.file.".pi/agent/npm/.npmrc".source = "${config}/.npmrc";
