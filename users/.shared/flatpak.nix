@@ -2,9 +2,11 @@
   config,
   pkgs,
   ...
-}: let
+}:
+let
   homeDirectory = config.home.homeDirectory;
-in {
+in
+{
   home.file = {
     # flatpak font/icon fixes
     # ".local/share/fonts".source = mkOutOfStoreSymlink "/run/current-system/sw/share/X11/fonts";
@@ -30,13 +32,6 @@ in {
   services.flatpak.update.auto.enable = false;
   services.flatpak.uninstallUnmanaged = true;
 
-  # proxy for declarative flatpak install/update
-  systemd.user.services.flatpak-managed-install.Service.Environment = [
-    "http_proxy=http://127.0.0.1:7897"
-    "https_proxy=http://127.0.0.1:7897"
-    "all_proxy=socks5://127.0.0.1:7897"
-  ];
-
   # QQ's wayland rendering is broken on niri (pure wayland), window never shows.
   # Force it onto XWayland: only grant the x11 socket (removes wayland),
   # see https://github.com/flathub/com.qq.QQ/issues/172
@@ -52,12 +47,6 @@ in {
     "com.qq.QQ".Environment = {
       ELECTRON_OZONE_PLATFORM_HINT = "x11";
       DISPLAY = ":0";
-    };
-
-    "md.obsidian.Obsidian".Environment = {
-      http_proxy = "http://127.0.0.1:7897";
-      https_proxy = "http://127.0.0.1:7897";
-      all_proxy = "socks5://127.0.0.1:7897";
     };
 
     global = {

@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{ pkgs, ... }: {
   # fcitx5 environment variables
   home.sessionVariables = {
     # GTK_IM_MODULE = "fcitx";
@@ -15,6 +15,8 @@
 
     fcitx5.addons = with pkgs; [
       fcitx5-gtk
+      fcitx5-pinyin-moegirl
+      fcitx5-pinyin-zhwiki
       qt6Packages.fcitx5-chinese-addons
     ];
 
@@ -27,6 +29,14 @@
       };
       "Groups/0/Items/0".Name = "keyboard-us";
       "Groups/0/Items/1".Name = "pinyin";
+    };
+
+    fcitx5.settings.addons = {
+      pinyin.globalSection = {
+        CloudPinyinEnabled = "True";
+        CloudPinyinIndex = 2;
+      };
+      cloudpinyin.globalSection.Backend = "Baidu";
     };
   };
 }

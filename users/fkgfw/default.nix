@@ -6,7 +6,8 @@
   username,
   homeDirectory,
   ...
-}: {
+}:
+{
   imports = [
     ./services/hysteria.nix
     ./services/xray.nix
@@ -34,7 +35,7 @@
     l = "ls -alh";
     ll = "ls -l";
     ls = "ls --color=tty";
-    hs = "home-manager switch --flake /root/.nix-config#fkgfw";
+    hs = "home-manager switch --flake path:/root/.nix-config#fkgfw";
   };
 
   # let hm install and manage itself
@@ -42,8 +43,14 @@
 
   # the agenix home-manager module is based on systemd user services, but the root user
   # cannot start user-level services, so we need to decrypt it manually
-  age.identityPaths = ["/etc/ssh/ssh_host_ed25519_key"];
-  home.activation.decryptAgenix = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  # the agenix module defaults to $XDG_RUNTIME_DIR/agenix; root does not
+  # reliably have that directory, so keep its state stable.
+  age = {
+    identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+    secretsDir = "${homeDirectory}/.local/share/agenix";
+    secretsMountPoint = "${homeDirectory}/.local/share/agenix.d";
+  };
+  home.activation.decryptAgenix = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     ${lib.concatStringsSep " " (lib.toList config.systemd.user.services.agenix.Service.ExecStart)}
   '';
 

@@ -3,9 +3,11 @@
   pkgs,
   username,
   ...
-}: let
+}:
+let
   homeDirectory = "/home/${username}";
-in {
+in
+{
   imports = [
     ../.shared/flatpak.nix
     ../.shared/fcitx5.nix
@@ -43,7 +45,7 @@ in {
     ];
   };
 
-  home.activation.ensureQtScrcpyConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.ensureQtScrcpyConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD ${pkgs.coreutils}/bin/mkdir -p "$HOME/.config/qtscrcpy"
   '';
 
@@ -74,13 +76,13 @@ in {
   programs.fastfetch.enable = true;
   programs.bash.enable = true;
   programs.bash.initExtra = "fastfetch -l linux";
-  home.sessionPath = ["$HOME/.local/bin"];
+  home.sessionPath = [ "$HOME/.local/bin" ];
   programs.bash.shellAliases = {
     nv = "nvidia-offload";
     nf = "nix flake new -t github:nix-community/nix-direnv";
-    ug = "sudo env http_proxy=http://127.0.0.1:7897 https_proxy=http://127.0.0.1:7897 nixos-rebuild switch --flake ~/.nix-config#thinkbook";
-    up = "sudo env http_proxy=http://127.0.0.1:7897 https_proxy=http://127.0.0.1:7897 nix flake update --flake ~/.nix-config && flatpak --user update -y";
-    ut = "sudo env http_proxy=http://127.0.0.1:7897 https_proxy=http://127.0.0.1:7897 nixos-rebuild test --flake ~/.nix-config#thinkbook";
+    ug = "sudo nixos-rebuild switch --flake ~/.nix-config#thinkbook";
+    up = "sudo nix flake update --flake ~/.nix-config && flatpak --user update -y";
+    ut = "sudo nixos-rebuild test --flake ~/.nix-config#thinkbook";
     reboot-to-win = "systemctl reboot --boot-loader-entry=auto-windows";
     clean = "sudo nix-collect-garbage -d";
   };
@@ -112,9 +114,13 @@ in {
     enable = true;
     autostart = true;
   };
-  systemd.user.services.hex.Service.Environment = [
-    "http_proxy=http://127.0.0.1:7897"
-    "https_proxy=http://127.0.0.1:7897"
-    "all_proxy=socks5://127.0.0.1:7897"
-  ];
+
+  # install this repo's pre-commit hook (nix-managed, idempotent)
+  home.activation.installNixConfigGitHook = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    repo_root="${homeDirectory}/.nix-config"
+    if [ -d "$repo_root/.git" ] && [ -f "$repo_root/hooks/pre-commit" ]; then
+      mkdir -p "$repo_root/.git/hooks"
+      ln -sf "$repo_root/hooks/pre-commit" "$repo_root/.git/hooks/pre-commit"
+    fi
+  '';
 }
