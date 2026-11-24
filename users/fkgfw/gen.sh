@@ -69,8 +69,8 @@ nix run nixpkgs#openssl -- req -x509 -nodes -newkey ec:<(nix run nixpkgs#openssl
     -subj "/CN=www.bing.com" 2>/dev/null
 
 # Get certificate SHA256 fingerprint for mihomo client
-FINGERPRINT=$(nix run nixpkgs#openssl -- x509 -noout -fingerprint -sha256 -in "$TMP_CERT" \
-    | sed 's/.*=//; s/://g; y/ABCDEF/abcdef/')
+FINGERPRINT=$(nix run nixpkgs#openssl -- x509 -noout -fingerprint -sha256 -in "$TMP_CERT" |
+    sed 's/.*=//; s/://g; y/ABCDEF/abcdef/')
 
 # --- Fill templates (without modifying originals) ---
 echo "Filling data into templates..."
@@ -82,11 +82,11 @@ TMP_MIHOMO_CLIENT=$(mktemp)
 # Xray server config
 sed -e "s|VLESS_UUID|$VLESS_UUID|" \
     -e "s|VLESS_PRIVATEKEY|$VLESS_PRIVATEKEY|" \
-    "$XRAY_SERVER_TEMPLATE" > "$TMP_XRAY_SERVER"
+    "$XRAY_SERVER_TEMPLATE" >"$TMP_XRAY_SERVER"
 
 # Hysteria2 server config
 sed -e "s|HY2_PASSWORD|$HY2_PASSWORD|" \
-    "$HY2_SERVER_TEMPLATE" > "$TMP_HY2_SERVER"
+    "$HY2_SERVER_TEMPLATE" >"$TMP_HY2_SERVER"
 
 # Mihomo client config
 sed -e "s|SERVER_IP_OR_DOMAIN|$SERVER_ADDR|g" \
@@ -94,7 +94,7 @@ sed -e "s|SERVER_IP_OR_DOMAIN|$SERVER_ADDR|g" \
     -e "s|FINGERPRINT|$FINGERPRINT|" \
     -e "s|VLESS_UUID|$VLESS_UUID|" \
     -e "s|VLESS_PUBLIC_KEY|$VLESS_PUBLICKEY|" \
-    "$MIHOMO_CLIENT_TEMPLATE" > "$TMP_MIHOMO_CLIENT"
+    "$MIHOMO_CLIENT_TEMPLATE" >"$TMP_MIHOMO_CLIENT"
 
 # --- Encrypt with agenix ---
 cd "$SECRETS_DIR"

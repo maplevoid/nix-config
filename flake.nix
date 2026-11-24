@@ -39,68 +39,103 @@
 
   };
 
-  outputs = inputs @ {
-    self,
-    nixpkgs,
-    home-manager,
-    ...
-  }: {
-    formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.alejandra;
-
-    nixosConfigurations.thinkbook = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = {
-        inherit inputs;
-        username = "zway";
-        hostname = "thinkbook";
-      };
-
-      modules = [
-        ./hosts/thinkbook
-
-        # nix-ld module for managing nix-ld
-        inputs.nix-ld.nixosModules.nix-ld
-
-        # agenix module for managing secrets
-        inputs.agenix.nixosModules.default
-
-        # home-manager module
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-
-          home-manager.extraSpecialArgs = {
-            inherit inputs;
-            username = "zway";
-            hostname = "thinkbook";
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      home-manager,
+      ...
+    }:
+    {
+      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-tree.override {
+        settings = {
+          formatter.shfmt = {
+            command = "shfmt";
+            options = [
+              "-w"
+              "-i"
+              "4"
+            ];
+            includes = [
+              "*.sh"
+              "**/*.sh"
+            ];
           };
-          home-manager.users."zway".imports = [
-            ./users/zway
-
-            inputs.nix-flatpak.homeManagerModules.nix-flatpak
-            inputs.stylix.homeModules.stylix
-            inputs.hex.homeManagerModules.hex
-          ];
-        }
-      ];
-    };
-    # this is actually a root user configuration for the vps, but I don't want to name it "root" to avoid confusion
-    homeConfigurations.fkgfw = home-manager.lib.homeManagerConfiguration {
-      pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
-
-      extraSpecialArgs = {
-        username = "root";
-        homeDirectory = "/root";
-        flakeRootPath = ./.;
-        agenix = inputs.agenix;
+          formatter.prettier = {
+            command = "prettier";
+            options = [
+              "--write"
+              "--print-width"
+              "120"
+              "--prose-wrap"
+              "always"
+            ];
+            includes = [
+              "*.md"
+              "**/*.md"
+            ];
+          };
+        };
+        runtimeInputs = [
+          nixpkgs.legacyPackages.x86_64-linux.shfmt
+          nixpkgs.legacyPackages.x86_64-linux.prettier
+        ];
       };
 
-      modules = [
-        ./users/fkgfw
+      nixosConfigurations.thinkbook = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs;
+          username = "zway";
+          hostname = "thinkbook";
+        };
 
-        inputs.agenix.homeManagerModules.default
-      ];
+        modules = [
+          ./hosts/thinkbook
+
+          # nix-ld module for managing nix-ld
+          inputs.nix-ld.nixosModules.nix-ld
+
+          # agenix module for managing secrets
+          inputs.agenix.nixosModules.default
+
+          # home-manager module
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+
+            home-manager.extraSpecialArgs = {
+              inherit inputs;
+              username = "zway";
+              hostname = "thinkbook";
+            };
+            home-manager.users."zway".imports = [
+              ./users/zway
+
+              inputs.nix-flatpak.homeManagerModules.nix-flatpak
+              inputs.stylix.homeModules.stylix
+              inputs.hex.homeManagerModules.hex
+            ];
+          }
+        ];
+      };
+      # this is actually a root user configuration for the vps, but I don't want to name it "root" to avoid confusion
+      homeConfigurations.fkgfw = home-manager.lib.homeManagerConfiguration {
+        pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
+
+        extraSpecialArgs = {
+          username = "root";
+          homeDirectory = "/root";
+          flakeRootPath = ./.;
+          agenix = inputs.agenix;
+        };
+
+        modules = [
+          ./users/fkgfw
+
+          inputs.agenix.homeManagerModules.default
+        ];
+      };
     };
-  };
 }
